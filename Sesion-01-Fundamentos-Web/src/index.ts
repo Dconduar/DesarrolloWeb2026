@@ -45,24 +45,22 @@ export type Headers = Record<string, string>;
 // ---------------------------------------------------------------------------
 
 /**
- * TODO: Analiza una URL y devuelve sus partes.
+ * Analiza una URL y devuelve sus partes.
  *
- * Pista: usa el constructor `new URL(url)` (viene con Node, no requiere
- * ninguna librería). Sus propiedades te dan todo lo que necesitas:
- *
- *   const u = new URL("https://api.ejemplo.com/users?id=1");
- *   u.protocol // → "https:"
- *   u.host     // → "api.ejemplo.com"
- *   u.pathname // → "/users"
- *   u.search   // → "?id=1"
- *   u.searchParams.entries() // → iterador [["id","1"]]
- *
- * Si la URL no es válida, `new URL()` lanza TypeError — no hace falta
- * que lo manejes aparte, se propagará solo.
+ * Usa el constructor `new URL(url)` (viene con Node, no requiere
+ * ninguna librería). Si la URL no es válida, `new URL()` lanza
+ * TypeError automáticamente, que se propaga sin necesidad de manejo extra.
  */
 export function parseUrl(url: string): UrlParts {
-  // TODO: tu implementación aquí
-  throw new Error("Not implemented");
+  const parsed = new URL(url);
+
+  return {
+    protocol: parsed.protocol,
+    host: parsed.host,
+    pathname: parsed.pathname,
+    search: parsed.search,
+    query: Array.from(parsed.searchParams.entries()),
+  };
 }
 
 /**
