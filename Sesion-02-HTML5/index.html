@@ -41,6 +41,31 @@
         Cada sección del archivo se investigó por separado; navega entre las pestañas
         para revisar el material completo.
       </p>
+
+      <p>
+        <button command="show-modal" commandfor="nota-investigador">📎 Abrir nota adjunta</button>
+      </p>
+
+      <dialog id="nota-investigador">
+        <h3>Nota del investigador</h3>
+        <p>
+          Este expediente es un proyecto académico de la clase de Desarrollo Web
+          (Sesión 2 — HTML5). Los datos históricos citados provienen de fuentes
+          públicas; los pronósticos del formulario son solo un ejercicio y no
+          se envían a ningún servidor real.
+        </p>
+        <form method="dialog">
+          <button>Cerrar expediente</button>
+        </form>
+      </dialog>
+
+      <p>
+        <button popovertarget="dato-curioso">🔍 Dato curioso</button>
+      </p>
+      <div id="dato-curioso" popover>
+        <h4>Dato curioso</h4>
+        <p>Juan Carlos Plata es el máximo goleador histórico de la Liga Nacional, con 296 goles en toda su carrera.</p>
+      </div>
     </article>
 
     <section>
@@ -85,6 +110,37 @@
         <li><strong>Clásico del Suroccidente:</strong> Xelajú MC vs. CSD Suchitepéquez.</li>
         <li><strong>Clásico Departamental:</strong> cualquier cruce entre equipos fuera de la capital, siempre con lleno total.</li>
       </ul>
+    </section>
+
+    <section>
+      <h2>Registra tu pronóstico</h2>
+      <p>Completa la boleta con tu predicción para el próximo Clásico Nacional.</p>
+
+      <form action="#" method="POST">
+        <label for="investigador">Tu nombre (investigador a cargo):</label>
+        <input id="investigador" type="text" name="investigador" required minlength="3"
+               placeholder="Ej. Ana López">
+
+        <label for="local">Equipo local:</label>
+        <select id="local" name="local" required>
+          <option value="">-- Selecciona --</option>
+          <option value="municipal">CSD Municipal</option>
+          <option value="comunicaciones">Comunicaciones FC</option>
+          <option value="xelaju">Xelajú MC</option>
+        </select>
+
+        <label for="goles-local">Goles del local:</label>
+        <input id="goles-local" type="number" name="goles-local" min="0" max="15" required>
+
+        <label for="goles-visita">Goles de la visita:</label>
+        <input id="goles-visita" type="number" name="goles-visita" min="0" max="15" required>
+
+        <label for="correo">Correo de contacto:</label>
+        <input id="correo" type="email" name="correo" required
+               placeholder="investigador@correo.com">
+
+        <button type="submit">Enviar pronóstico</button>
+      </form>
     </section>
 
     <aside>
