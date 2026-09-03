@@ -1,14 +1,7 @@
-/**
- * Lista de Tareas — JS Parte 1
- * Universidad Mariano Gálvez de Guatemala · Desarrollo Web
- *
- * Implementa las funciones marcadas con TODO para que los tests pasen.
- * No cambies los nombres exportados ni su firma.
- */
+
 
 const STORAGE_KEY = "tareas-dw-s4";
 
-// Estado en memoria (lo que se persiste y se renderiza)
 let tareas = [];
 
 /**
@@ -64,8 +57,10 @@ export function eliminarTarea(id) {
  * @returns {boolean}
  */
 export function toggleTarea(id) {
-    // TODO: recorrer `tareas` y cambiar `completada` de la que coincida.
-    // Devuelve true si la encontró.
+    const tarea = tareas.find((t) => t.id === id);
+    if (!tarea) return false;
+    tarea.completada = !tarea.completada;
+    return true;
 }
 
 /**
@@ -74,7 +69,8 @@ export function toggleTarea(id) {
  * @returns {Array}
  */
 export function filtrarTareas(filtro) {
-    // TODO: implementar la lógica de filtrado.
+    if (filtro === "pendientes") return tareas.filter((t) => !t.completada);
+    if (filtro === "completadas") return tareas.filter((t) => t.completada);
     return tareas;
 }
 
@@ -82,23 +78,22 @@ export function filtrarTareas(filtro) {
  * Persiste el array `tareas` en localStorage como JSON.
  */
 export function guardar() {
-    // TODO: usar localStorage.setItem con la clave STORAGE_KEY.
-    // El valor debe ser JSON.stringify(tareas).
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tareas));
 }
 
 /**
  * Carga las tareas desde localStorage. Si no hay nada, deja el array vacío.
  */
 export function cargar() {
-    // TODO: leer localStorage con STORAGE_KEY.
-    // Si existe, hacer JSON.parse y asignarlo a `tareas`.
-    // Si no existe o falla, `tareas` se queda como [].
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        tareas = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        tareas = [];
+    }
 }
 
-// =====================================================
-// Renderizado y eventos (no se exportan, pero se prueban
-// indirectamente con los tests que inspeccionan el DOM).
-// =====================================================
+
 
 /**
  * Pinta la lista de tareas en el DOM, aplicando el filtro activo.
@@ -185,7 +180,6 @@ function init() {
     });
 }
 
-// Solo inicializar cuando hay un DOM (no en tests con jsdom)
 if (typeof document !== "undefined" && document.getElementById("lista-tareas")) {
     document.addEventListener("DOMContentLoaded", init);
 }
