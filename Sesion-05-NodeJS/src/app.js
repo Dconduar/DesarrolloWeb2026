@@ -53,15 +53,44 @@ export function infoSistema() {
 }
 
 export function crearLogger() {
-    throw new Error('Not implemented: crearLogger');
+    const emisor = new EventEmitter();
+
+    return {
+        registrar(mensaje) {
+            emisor.emit('registro', `[${new Date().toISOString()}] ${mensaje}`);
+        },
+        onRegistro(fn) {
+            emisor.on('registro', fn);
+        },
+    };
 }
 
 export async function leerMensajes(archivoDatos) {
-    throw new Error('Not implemented: leerMensajes');
+    try {
+        const contenido = await fs.readFile(archivoDatos, 'utf-8');
+        const datos = JSON.parse(contenido);
+        return Array.isArray(datos) ? datos : [];
+    } catch (err) {
+        return [];
+    }
 }
 
 export async function agregarMensaje(archivoDatos, texto) {
-    throw new Error('Not implemented: agregarMensaje');
+    const limpio = (texto || '').trim();
+    if (!limpio) return null;
+
+    const mensajes = await leerMensajes(archivoDatos);
+    const nuevo = {
+        id: generarId(),
+        texto: limpio,
+        fecha: new Date().toISOString(),
+    };
+    mensajes.push(nuevo);
+
+    await fs.mkdir(path.dirname(archivoDatos), { recursive: true });
+    await fs.writeFile(archivoDatos, JSON.stringify(mensajes, null, 2), 'utf-8');
+
+    return nuevo;
 }
 
 export function crearServidor(config = {}) {
