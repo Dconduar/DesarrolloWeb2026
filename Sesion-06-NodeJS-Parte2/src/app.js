@@ -34,10 +34,63 @@ export function parsearEnv(contenido) {
     return resultado;
 }
 
-export async function filtrarLogs(origen, destino, texto) {
-    throw new Error('Not implemented: filtrarLogs');
+export async function leerLineas(ruta) {
+    return new Promise((resolve, reject) => {
+        const stream = createReadStream(ruta, 'utf-8');
+        let datos = '';
+
+        stream.on('data', (chunk) => {
+            datos += chunk;
+        });
+
+        stream.on('end', () => {
+            const lineas = datos
+                .split('\n')
+                .map((linea) => linea.trim())
+                .filter((linea) => linea.length > 0);
+            resolve(lineas);
+        });
+
+        stream.on('error', (err) => {
+            reject(err);
+        });
+    });
 }
 
-export async function leerLineas(ruta) {
-    throw new Error('Not implemented: leerLineas');
+export async function filtrarLogs(origen, destino, texto) {
+    let contador = 0;
+    let buffer = '';
+
+    const filtro = new Transform({
+        transform(chunk, encoding, callback) {
+            buffer += chunk.toString();
+            const partes = buffer.split('\n');
+            buffer = partes.pop();
+
+            let salida = '';
+            for (const linea of partes) {
+                if (linea.includes(texto)) {
+                    salida += linea + '\n';
+                    contador++;
+                }
+            }
+            callback(null, salida);
+        },
+        flush(callback) {
+            if (buffer.includes(texto)) {
+                contador++;
+                callback(null, buffer + '\n');
+            } else {
+                callback();
+            }
+        },
+    });
+
+    await pipeline(
+        createReadStream(origen, 'utf-8'),
+        filtro,
+        createWriteStream(destino)
+    );
+
+    return contador;
 }
